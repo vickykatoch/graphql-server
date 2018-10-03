@@ -7,7 +7,7 @@ const collection = (collectionName) => {
     return {
         getAll : () => data[collectionName],
         get : (fieldName,id) => data[collectionName].filter(item=> item[fieldName] === id),
-        getMany : (ids) => data[collectionName].filter(item=>  ids.includes(item.id))
+        getMany : (fieldName,ids) => data[collectionName].filter(item=>  ids.includes(item[fieldName]))
     };
 };
 

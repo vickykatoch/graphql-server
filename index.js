@@ -9,7 +9,7 @@ const {
 const db = require('./data/db');
 
 
-const typeDefs = gql `
+const typeDefs = gql`
     type User {
         userId : String!
         firstName : String!
@@ -30,8 +30,7 @@ const typeDefs = gql `
     }
     type Query {
         getUser(userId: String) : User
-        role : Role,
-        user : User
+        role : Role
     }
 `;
 
@@ -40,17 +39,23 @@ const typeDefs = gql `
 const resolvers = {
     Query: {
         getUser: (source, args, context, info) => {
-            debugger;
-            const x = db.collection('users').get('userId',args.userId)[0];
+            const x = db.collection('users').get('userId', args.userId)[0];
             return x;
         },
-        user : {
-            roles : (source, args, context, info) => {
-                debugger;
-                console.log(source);
+
+        role: () => db.collection('roles').get('id', 1)[0]
+    },
+    User: {
+        roles: (parent, args, context, info) => {
+            const userRoles = db.collection('userRoles').get('userId', parent.userId);
+            if (userRoles.length) {
+                const roleIds = userRoles.map(x => x.roleId);
+                const roles = db.collection('roles').getMany('id', roleIds);
+                return roles;
+            } else {
+                return [];
             }
-        },
-        role: () => db.collection('roles').get('id',1)[0]
+        }
     }
 };
 

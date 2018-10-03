@@ -16,6 +16,12 @@ const users = [{
     "lastName": "Katoch3",
     "password": "pwd",
     "isActive": false
+}, {
+    "userId": "bk4",
+    "firstName": "Balwinder4",
+    "lastName": "Katoch4",
+    "password": "pwd",
+    "isActive": false
 }];
 const roles = [{
     id: 1,
@@ -42,7 +48,7 @@ const userRoles = [{
     roleId : 2
 },{
     userId : "bk2",
-    roleId : 3
+    roleId : 2
 },{
     userId : "bk3",
     roleId : 3
