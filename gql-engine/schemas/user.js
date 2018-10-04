@@ -17,18 +17,24 @@ const typeDefs = gql`
         getAllUsers : [User]!
     }
 `;
+const getUser = (source, args, { repository }, info) => {
+    const collection = repository.collection('users');
+    const user = await collection.fetchEntityById(args.userId);
+    return user;
+}
 
 const resolvers = {
     Query: {
-        getUser: (source, args, {repository}, info) => repository.collection('users').getSingle('userId',args.userId),
-        getAllUsers: (source, args, {repository}, info) => repository.collection('users').getAll()       
+        getUser,
+        getAllUsers: (source, args, { repository }, info) => repository.collection('users').getAll()
     },
-    User : {
-        roles : (source, args, {repository}, info) => {
-            const userRoles = repository.collection('userRoles').get('userId',source.userId);
-            const ids = userRoles.map(x=> x.roleId);
-            const roles = repository.collection('roles').getMany('id',ids);
-            return roles;
+    User: {
+        roles: (source, args, { repository }, info) => {
+            // const userRoles = repository.collection('userRoles').get('userId',source.userId);
+            // const ids = userRoles.map(x=> x.roleId);
+            // const roles = repository.collection('roles').getMany('id',ids);
+            // return roles;
+            return [];
         }
     }
 };

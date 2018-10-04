@@ -19,9 +19,11 @@
   },
   "homepage": "https://github.com/vickykatoch/graphql-server#readme",
   "dependencies": {
-    "apollo-server": "^2.1.0",
-    "graphql": "^14.0.2",
-    "graphql-tools": "^4.0.0",
-    "lodash": "^4.17.11"
+    "apollo-server": "2.1.0",
+    "graphql": "14.0.2",
+    "graphql-tools": "4.0.0",
+    "lodash": "4.17.11",
+    "sequelize": "4.38.0",
+    "sqlite3": "4.0.2"
   }
 }
