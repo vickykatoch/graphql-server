@@ -1,7 +1,6 @@
 const {
     gql
 } = require('apollo-server');
-const db = require('../../data/db');
 
 
 const typeDefs = gql `
@@ -19,9 +18,8 @@ const typeDefs = gql `
 
 const resolvers = {
     Query: {
-        getRole: (source, args, context, info) => {
-            return db.collection('roles').get('id',args.id)[0];
-        }
+        getRole: (source, args, {repository}, info) => repository.collection('roles').getSingle('id',args.id),
+        getAllRoles: (source, args, {repository}, info) => repository.collection('roles').getAll()
     }
 };
 
