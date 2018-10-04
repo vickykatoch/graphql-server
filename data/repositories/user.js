@@ -17,13 +17,9 @@ module.exports = (db) => {
     };
     //#endregion
 
-    const fetchEntityById = async (id) => {
-        debugger;
-        db.User.findById(id, { include: [roleIncludes] })
-        .then(user => {
-            return user;
-        }).catch(error => {
-            throw error;
+    const fetchEntityById = (id) => {
+        return db.User.findById(id, {
+            include: [roleIncludes]
         });
     };
     const fetchAllEntities = () => {

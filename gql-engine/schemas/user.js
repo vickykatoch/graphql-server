@@ -3,7 +3,7 @@ const {
 } = require('apollo-server');
 
 
-const typeDefs = gql`
+const typeDefs = gql `
     type User {
         userId : String!
         firstName : String!
@@ -17,8 +17,10 @@ const typeDefs = gql`
         getAllUsers : [User]!
     }
 `;
-const getUser = (source, args, { repository }, info) => {
+
+const getUser = async (source, args, { repository }, info) => {
     const collection = repository.collection('users');
+    debugger;
     const user = await collection.fetchEntityById(args.userId);
     return user;
 }
@@ -26,10 +28,14 @@ const getUser = (source, args, { repository }, info) => {
 const resolvers = {
     Query: {
         getUser,
-        getAllUsers: (source, args, { repository }, info) => repository.collection('users').getAll()
+        getAllUsers: (source, args, {
+            repository
+        }, info) => repository.collection('users').getAll()
     },
     User: {
-        roles: (source, args, { repository }, info) => {
+        roles: (source, args, {
+            repository
+        }, info) => {
             // const userRoles = repository.collection('userRoles').get('userId',source.userId);
             // const ids = userRoles.map(x=> x.roleId);
             // const roles = repository.collection('roles').getMany('id',ids);
