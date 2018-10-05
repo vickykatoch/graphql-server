@@ -11,7 +11,14 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         password: DataTypes.STRING,
-        name: {
+        firstName: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                len: [3, 50]
+            }
+        },
+        lastName: {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
@@ -21,7 +28,9 @@ module.exports = (sequelize, DataTypes) => {
         isActive: {
             type: DataTypes.BOOLEAN,
             defaultValue: true
-        }
+        },
+        createdAt : DataTypes.DATE,
+        updatedAt : DataTypes.DATE,
     },{
         hooks: {
             beforeValidate : (user)=> {
@@ -39,6 +48,7 @@ module.exports = (sequelize, DataTypes) => {
         }
     });
 
+    
     User.associate = (models) => {
         models.User.belongsToMany(models.Role, {
             as : 'roles',

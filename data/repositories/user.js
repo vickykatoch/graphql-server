@@ -23,10 +23,12 @@ module.exports = (db) => {
         });
     };
     const fetchAllEntities = () => {
-
+        return db.User.findAll({
+            include: [roleIncludes]
+        });
     };
     const fetchCustomEntities = (criteria) => {
-
+        
     };
     const upsertEntity = (user) => {
 
