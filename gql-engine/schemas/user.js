@@ -18,6 +18,9 @@ const typeDefs = gql `
         getUser(userId: String) : User
         getAllUsers : [User]!
     }
+    type Mutation {
+        createUser(userId: String!, firstName: String!, lastName: String) : User
+    }
 `;
 
 const getUser = async (source, args, { repository }, info) => {
@@ -27,6 +30,10 @@ const getUser = async (source, args, { repository }, info) => {
 const getAllUsers = async (source, args, { repository }, info) => {
     const users = await repository.collection('users').fetchAllEntities();
     return users;
+};
+const createUserMutation = (source, args, { repository })  => {
+    debugger;
+    return getUser('bkatoch1');
 };
 
 const resolvers = {
@@ -44,6 +51,9 @@ const resolvers = {
         updatedAt : (source) => {
             return source.createdAt.toISOString();
         }
+    },
+    Mutation : {
+        createUser: createUserMutation
     }
 };
 
