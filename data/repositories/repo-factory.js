@@ -1,8 +1,12 @@
-const user = require('./user');
+const user = require('./user-repo');
+const role = require('./role-repo');
+const resource = require('./resource-repo');
 
 const buildRepoMap = (db) => {
     const repoMap = new Map();
     repoMap.set('users', user(db));
+    repoMap.set('roles', role(db));
+    repoMap.set('resources', resource(db));
     return repoMap;
 };
 

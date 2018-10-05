@@ -6,7 +6,11 @@ const {
 } = require('graphql-tools');
 const userSchema = require('./user');
 const roleSchema = require('./role');
+const resourceSchema = require('./resource');
+
+// TODO: REMOVE
 const userRoleSchema = require('./user-role');
+
 const { merge } = require('lodash');
 
 const baseQuery = gql`
@@ -14,8 +18,8 @@ const baseQuery = gql`
         _empty: String
     }
 `;
-const typeDefs = [baseQuery, userSchema.typeDefs, roleSchema.typeDefs, userRoleSchema.typeDefs];
-const resolvers = merge(userSchema.resolvers, roleSchema.resolvers);
+const typeDefs = [baseQuery, userSchema.typeDefs, roleSchema.typeDefs, userRoleSchema.typeDefs, resourceSchema.typeDefs];
+const resolvers = merge(userSchema.resolvers, roleSchema.resolvers, resourceSchema.resolvers);
 
 const schema = makeExecutableSchema({
     typeDefs,

@@ -11,7 +11,7 @@ const typeDefs = gql `
         password : String
         isActive : Boolean
         createdAt : String
-        updatedAt: String
+        updatedAt : String
         roles : [Role]
     } 
     extend type Query {
@@ -21,35 +21,27 @@ const typeDefs = gql `
 `;
 
 const getUser = async (source, args, { repository }, info) => {
-    const collection = repository.collection('users');
-    const user = await collection.fetchEntityById(args.userId);
+    const user = await repository.collection('users').fetchEntityById(args.userId);
     return user;
-}
+};
+const getAllUsers = async (source, args, { repository }, info) => {
+    const users = await repository.collection('users').fetchAllEntities();
+    return users;
+};
 
 const resolvers = {
     Query: {
         getUser,
-        getAllUsers: async (source, args, {
-            repository
-        }, info) => {
-            const users = await repository.collection('users').fetchAllEntities();
-            return users;
-        }
+        getAllUsers
     },
     User: {
-        roles: (source, args, { 
-            repository
-        }, info) => {
+        roles: (source) => {
             return source.roles;
         },
-        createdAt : (source, args, { 
-            repository
-        }, info) => {
+        createdAt : (source) => {
             return source.createdAt.toISOString();
         },
-        updatedAt : (source, args, { 
-            repository
-        }, info) => {
+        updatedAt : (source) => {
             return source.createdAt.toISOString();
         }
     }
