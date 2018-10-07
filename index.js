@@ -25,7 +25,7 @@ const serverInitializer = (db) => {
 
 
 db.sequelize.sync({
-    logging: console.log,
+    // logging: console.log,
     force: true
 }).then(() => {
     console.log('Database connection established successfully');

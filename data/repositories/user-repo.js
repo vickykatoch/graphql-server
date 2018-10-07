@@ -30,18 +30,28 @@ module.exports = (db) => {
     const fetchCustomEntities = (criteria) => {
         
     };
-    const upsertEntity = (user) => {
-
+    const addEntity = (user) => {
+        return db.User.create(user);
     };
-    const removeEntity = (user) => {
-
+    const updateEntity = async (user) => {
+        const dbUser = await fetchEntityById(user.userId);
+        return dbUser.update(user);
+    };
+    const removeEntity = async (userId) => {
+        const dbUser = await fetchEntityById(userId);
+        return dbUser.destroy({
+            where : {
+                userId : userId
+            }
+        });
     };
 
     return {
         fetchEntityById,
         fetchAllEntities,
         fetchCustomEntities,
-        upsertEntity,
+        addEntity,
+        updateEntity,
         removeEntity
     };
 };

@@ -1,7 +1,9 @@
 const {
     gql
 } = require('apollo-server');
-
+const {
+    
+} = require('graphql-tools');
 
 const typeDefs = gql `
     type User {
@@ -14,14 +16,23 @@ const typeDefs = gql `
         updatedAt : String
         roles : [Role]
     } 
+    input UserInput {
+        userId : String!
+        firstName : String!
+        lastName : String
+        isActive : Boolean
+    }
     extend type Query {
         getUser(userId: String) : User
         getAllUsers : [User]!
     }
     type Mutation {
-        createUser(userId: String!, firstName: String!, lastName: String) : User
+        createUser(user: UserInput!) : User
+        updateUser(user: UserInput!) : User
+        deleteUser(userId: String!) : Boolean
     }
 `;
+
 
 const getUser = async (source, args, { repository }, info) => {
     const user = await repository.collection('users').fetchEntityById(args.userId);
@@ -31,11 +42,18 @@ const getAllUsers = async (source, args, { repository }, info) => {
     const users = await repository.collection('users').fetchAllEntities();
     return users;
 };
-const createUserMutation = (source, args, { repository })  => {
-    debugger;
-    return getUser('bkatoch1');
+const createUserMutation = async (source, {user}, { repository })  => {
+    const createdUser = await repository.collection('users').addEntity(user);
+    return createdUser;
 };
-
+const updateUserMutation = async (source, {user}, { repository })  => {
+    const updatedUser = await repository.collection('users').updateEntity(user);
+    return updatedUser;
+};
+const deleteUserMutation = async (source, {userId}, { repository })  => {
+    const deletedUser = await repository.collection('users').removeEntity(userId);
+    return !(!deletedUser);
+};
 const resolvers = {
     Query: {
         getUser,
@@ -53,7 +71,9 @@ const resolvers = {
         }
     },
     Mutation : {
-        createUser: createUserMutation
+        createUser: createUserMutation,
+        updateUser : updateUserMutation,
+        deleteUser: deleteUserMutation
     }
 };
 
