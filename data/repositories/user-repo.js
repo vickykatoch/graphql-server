@@ -22,13 +22,14 @@ module.exports = (db) => {
             include: [roleIncludes]
         });
     };
-    const fetchAllEntities = () => {
-        return db.User.findAll({
+    const fetchAllEntities = (filter) => {
+        const fltr = filter ? { where: { ...filter } } : undefined;
+        return db.User.findAll(fltr,{
             include: [roleIncludes]
         });
     };
     const fetchCustomEntities = (criteria) => {
-        
+
     };
     const addEntity = (user) => {
         return db.User.create(user);
@@ -40,8 +41,8 @@ module.exports = (db) => {
     const removeEntity = async (userId) => {
         const dbUser = await fetchEntityById(userId);
         return dbUser.destroy({
-            where : {
-                userId : userId
+            where: {
+                userId: userId
             }
         });
     };

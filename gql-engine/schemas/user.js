@@ -1,11 +1,10 @@
 const {
     gql
 } = require('apollo-server');
-const {
-    
-} = require('graphql-tools');
+const pubsub = require('./pub-sub');
+const USER_ADDED = "USER_ADDED";
 
-const typeDefs = gql `
+const typeDefs = gql`
     type User {
         userId : String!
         firstName : String!
@@ -22,59 +21,79 @@ const typeDefs = gql `
         lastName : String
         isActive : Boolean
     }
+    input UserFilterInput {
+        userId : String
+        firstName : String
+        lastName : String
+        isActive : Boolean        
+    }
     extend type Query {
-        getUser(userId: String) : User
-        getAllUsers : [User]!
+        user(userId: String!) : User
+        users(filter: UserFilterInput) : [User]!
     }
     type Mutation {
         createUser(user: UserInput!) : User
         updateUser(user: UserInput!) : User
         deleteUser(userId: String!) : Boolean
     }
+    type Subscription {
+		userAdded: User
+	}
 `;
 
-
-const getUser = async (source, args, { repository }, info) => {
+const getUser = async (source, args, { repository }, info) => {   
     const user = await repository.collection('users').fetchEntityById(args.userId);
     return user;
 };
 const getAllUsers = async (source, args, { repository }, info) => {
-    const users = await repository.collection('users').fetchAllEntities();
+    const users = await repository.collection('users').fetchAllEntities(args.filter);
     return users;
 };
-const createUserMutation = async (source, {user}, { repository })  => {
+const createUserMutation = async (source, { user }, { repository }) => {
     const createdUser = await repository.collection('users').addEntity(user);
+    pubsub.publish(USER_ADDED, { userAdded: createdUser });
     return createdUser;
 };
-const updateUserMutation = async (source, {user}, { repository })  => {
+const updateUserMutation = async (source, { user }, { repository }) => {
     const updatedUser = await repository.collection('users').updateEntity(user);
     return updatedUser;
 };
-const deleteUserMutation = async (source, {userId}, { repository })  => {
+const deleteUserMutation = async (source, { userId }, { repository }) => {
     const deletedUser = await repository.collection('users').removeEntity(userId);
     return !(!deletedUser);
 };
+const userAdded = {
+    resolve: ({ userAdded }) => {
+        return userAdded;
+    },
+    subscribe: () => {
+        return pubsub.asyncIterator([USER_ADDED]);
+    }
+};
 const resolvers = {
     Query: {
-        getUser,
-        getAllUsers
+        user: getUser,
+        users: getAllUsers
     },
     User: {
         roles: (source) => {
             return source.roles;
         },
-        createdAt : (source) => {
+        createdAt: (source) => {
             return source.createdAt.toISOString();
         },
-        updatedAt : (source) => {
+        updatedAt: (source) => {
             return source.createdAt.toISOString();
         }
     },
-    Mutation : {
+    Mutation: {
         createUser: createUserMutation,
-        updateUser : updateUserMutation,
+        updateUser: updateUserMutation,
         deleteUser: deleteUserMutation
-    }
+    },
+    Subscription: {
+        userAdded
+    },
 };
 
 module.exports = {

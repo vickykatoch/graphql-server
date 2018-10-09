@@ -1,6 +1,5 @@
 const {
-    ApolloServer,
-    gql
+    ApolloServer
 } = require('apollo-server');
 const {
     makeExecutableSchema,
@@ -8,6 +7,7 @@ const {
 } = require('graphql-tools');
 const db = require('./data');
 const schema = require('./gql-engine/schemas/index');
+
 
 const serverInitializer = (db) => {
     const server = new ApolloServer({
@@ -17,9 +17,11 @@ const serverInitializer = (db) => {
         }
     });
     server.listen().then(({
-        url
+        url,
+        subscriptionsUrl
     }) => {
         console.log(`🚀  Server ready at ${url}`);
+        console.log(`🚀 Subscriptions ready at ${subscriptionsUrl}`);
     });
 };
 
