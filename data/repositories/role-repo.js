@@ -23,9 +23,16 @@ module.exports = (db) => {
             include: [userIncludes, resourceInclude]
         });
     };
-    const fetchAllEntities = () => {
+    const fetchAllEntities = (name) => {
+        const filter = name ? {
+                name: {
+                    [db.Sequelize.Op.like]: `${name}%`
+                }
+        } : undefined;
+
         return db.Role.findAll({
-            include: [userIncludes, resourceInclude]
+            include: [userIncludes, resourceInclude],
+            where : filter
         });
     };
     const fetchCustomEntities = (criteria) => {

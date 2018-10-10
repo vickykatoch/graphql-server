@@ -27,13 +27,20 @@ const typeDefs = gql`
         lastName : String
         isActive : Boolean        
     }
+    input UserCreateUpdateInput {
+        userId : String!
+        firstName : String
+        lastName : String
+        isActive : Boolean
+        roles : [Int]
+    }
     extend type Query {
         user(userId: String!) : User
         users(filter: UserFilterInput) : [User]!
     }
     type Mutation {
         createUser(user: UserInput!) : User
-        updateUser(user: UserInput!) : User
+        updateUser(user: UserCreateUpdateInput!) : User
         deleteUser(userId: String!) : Boolean
     }
     type Subscription {
@@ -41,7 +48,7 @@ const typeDefs = gql`
 	}
 `;
 
-const getUser = async (source, args, { repository }, info) => {   
+const getUser = async (source, args, { repository }, info) => {
     const user = await repository.collection('users').fetchEntityById(args.userId);
     return user;
 };

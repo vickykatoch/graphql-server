@@ -11,7 +11,8 @@ const typeDefs = gql`
         isActive : Boolean
         createdAt : String
         updatedAt : String 
-        roles : [Role]       
+        roles : [Role] 
+        permissions: Int      
     } 
     extend type Query {
         getResource(id: Int!) : Resource
@@ -35,8 +36,10 @@ const resolvers = {
     },
     Resource: {
         roles : (source) => {
-            debugger;
             return source.roles;
+        },
+        permissions: (source) => {
+            return source.acl.permissions;
         },
         createdAt: (source) => {
             return source.createdAt.toISOString();

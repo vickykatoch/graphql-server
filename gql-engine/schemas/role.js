@@ -15,8 +15,8 @@ const typeDefs = gql`
         users : [User]
     }
     extend type Query {
-        getRole(id: Int!) : Role
-        getAllRoles : [Role]!
+        role(id: Int!) : Role
+        roles(name: String) : [Role]!
     }
 `;
 
@@ -27,22 +27,22 @@ const getRole = async (source, args, { repository }, info) => {
 };
 const getAllRoles = async (source, args, { repository }, info) => {
     const collection = repository.collection('roles');
-    const role = await collection.fetchAllEntities();
-    return role;
+    const roles = await collection.fetchAllEntities(args.name);
+    return roles;
 };
 
 
 const resolvers = {
     Query: {
-        getRole,
-        getAllRoles
+        role : getRole,
+        roles : getAllRoles
     },
     Role: {
         users : (source) => {             
             return source.users;
         },
         resources : (source) => {
-            return source.resources;
+            return source.resources ? source.resources : [];
         },
         createdAt: (source) => {
             return source.createdAt.toISOString();
