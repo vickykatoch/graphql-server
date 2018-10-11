@@ -23,7 +23,10 @@ module.exports = (db) => {
         });
     };
     const fetchAllEntities = (filter) => {
-        const fltr = filter ? { where: { ...filter } } : undefined;
+        const fltr = filter ? {
+            where: { ...filter
+            }
+        } : undefined;
         return db.User.findAll(fltr, {
             include: [roleIncludes]
         });
@@ -35,12 +38,24 @@ module.exports = (db) => {
         return db.User.create(user);
     };
     const updateEntity = async (user) => {
-        let dbUser = await fetchEntityById(user.userId);
+        let dbUser = await fetchEntityById(user.userId).then(x=> {
+            return x;
+        }).catch(err=> {
+            console.error(err);
+        });
         const roles = user.roles;
         delete user.roles;
-        dbUser = await dbUser.update(user); 
-        const x = await dbUser.setRoles(roles);
-        return fetchEntityById(user.userId);
+        if (dbUser) {
+            dbUser = await dbUser.update(user);
+            const x = await dbUser.setRoles(roles);
+            return fetchEntityById(user.userId);
+        } else {
+            dbUser = await db.User.create(user);
+            if(roles && roles.length) {
+                const x = await dbUser.setRoles(roles);
+            }
+            return fetchEntityById(user.userId);
+        }
     };
     const removeEntity = async (userId) => {
         const dbUser = await fetchEntityById(userId);

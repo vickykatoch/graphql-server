@@ -15,12 +15,7 @@ const typeDefs = gql`
         updatedAt : String
         roles : [Role]
     } 
-    input UserInput {
-        userId : String!
-        firstName : String!
-        lastName : String
-        isActive : Boolean
-    }
+    
     input UserFilterInput {
         userId : String
         firstName : String
@@ -39,8 +34,7 @@ const typeDefs = gql`
         users(filter: UserFilterInput) : [User]!
     }
     type Mutation {
-        createUser(user: UserInput!) : User
-        updateUser(user: UserCreateUpdateInput!) : User
+        saveUser(user: UserCreateUpdateInput!) : User
         deleteUser(userId: String!) : Boolean
     }
     type Subscription {
@@ -56,14 +50,10 @@ const getAllUsers = async (source, args, { repository }, info) => {
     const users = await repository.collection('users').fetchAllEntities(args.filter);
     return users;
 };
-const createUserMutation = async (source, { user }, { repository }) => {
-    const createdUser = await repository.collection('users').addEntity(user);
-    pubsub.publish(USER_ADDED, { userAdded: createdUser });
-    return createdUser;
-};
-const updateUserMutation = async (source, { user }, { repository }) => {
-    const updatedUser = await repository.collection('users').updateEntity(user);
-    return updatedUser;
+
+const saveUserMutation = async (source, { user }, { repository }) => {
+    const savedUser = await repository.collection('users').updateEntity(user);
+    return savedUser;
 };
 const deleteUserMutation = async (source, { userId }, { repository }) => {
     const deletedUser = await repository.collection('users').removeEntity(userId);
@@ -94,8 +84,7 @@ const resolvers = {
         }
     },
     Mutation: {
-        createUser: createUserMutation,
-        updateUser: updateUserMutation,
+        saveUser: saveUserMutation,
         deleteUser: deleteUserMutation
     },
     Subscription: {
